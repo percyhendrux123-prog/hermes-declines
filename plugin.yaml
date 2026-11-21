@@ -1,0 +1,30 @@
+name: hermes-declines
+version: 0.1.0
+manifest_version: 2
+api_version: 1
+description: Remembers scheduled jobs the user declined and vetoes the same job when the model proposes it again, or when a matching job already exists (active or paused). Stores only a normalized prompt, its sha256, deliver target, schedule kind, timestamp, session key and surface. Fails open; no network calls.
+author: Deploy Axiom
+license: MIT
+requires_hermes: ">=0.22.5"
+platforms: [macos, linux]
+provides_hooks:
+  - pre_llm_call
+  - pre_tool_call
+  - post_tool_call
+  - post_approval_response
+config_schema:
+  threshold:
+    type: float
+    default: 0.6
+    description: Token-Jaccard similarity (0-1) at which a proposal counts as the same job as a declined or existing one.
+  expire_days:
+    type: int
+    default: 30
+    description: Days a decline stays active. 0 turns holds off.
+  check_existing_jobs:
+    type: bool
+    default: true
+    description: Also veto near-duplicates of existing active or paused jobs.
+  state_dir:
+    type: str
+    description: Where declines are stored. Default HERMES_HOME/plugins-state/hermes-declines.
