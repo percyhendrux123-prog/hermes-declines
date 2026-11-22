@@ -1,5 +1,7 @@
 # hermes-declines
 
+> **Part of the seat**, a collection of Hermes plugins that work together: watch, decide, act, prove, hand off. This one covers **decide**: it remembers your no. [See the whole collection](https://github.com/percyhendrux123-prog#the-seat-a-collection-of-hermes-plugins).
+
 A "no" to a scheduled job should be a record that code checks, not something the model is trusted to remember.
 
 [Hermes Agent](https://github.com/NousResearch/hermes-agent) lets the model propose scheduled jobs through `cronjob_manage`, and upstream PR [#158289](https://github.com/NousResearch/hermes-agent/pull/158289) puts each proposal on a "Schedule this job?" card. If you say no, the only memory of it is in the conversation, so the same job tends to come back next week under a new name or date. This plugin writes your "no" down and checks it before the next proposal goes through.
