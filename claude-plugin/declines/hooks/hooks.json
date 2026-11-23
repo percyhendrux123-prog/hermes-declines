@@ -1,0 +1,4 @@
+{
+  "description": "Declines: remembers permission requests you declined and stops Claude re-asking",
+  "modules": ["./register.mjs"]
+}
