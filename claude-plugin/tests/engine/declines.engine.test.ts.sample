@@ -1,0 +1,32 @@
+// Runs the real mod through Claude Code's own test kit (`claude plugin test`).
+// To run it: copy this file into the plugin folder (next to hooks/) and run
+// `claude plugin test` there. It stands in for the store and for Claude Code's
+// own permission answer, and fires the same events Claude Code fires.
+import { expect, test } from 'claude-code/testing'
+
+test('real engine: a decline is saved at the next step and holds a reworded repeat', async ($, on) => {
+  const kv = new Map<string, unknown>()
+  on('store.get', (_h: any, e: any) => ({ value: kv.get(e.key) }))
+  on('store.set', (_h: any, e: any) => { kv.set(e.key, e.value); return { value: undefined } })
+  on('store.delete', (_h: any, e: any) => { kv.delete(e.key); return { value: undefined } })
+  on('store.keys', () => ({ value: [...kv.keys()] }))
+  on('session.root', () => ({ value: '/work/one' }))
+  on('tool.check', () => ({ decision: 'ask' }))
+  on('turn.step', async function* (_h: any, e: any) { return { turnId: e.turnId, index: e.index, answer: '', toolUses: [], stopReason: null, usage: null } } as any)
+
+  const api = $ as any
+  const call = { tool: 'Bash', input: { command: 'git push origin release --force CANARY-1' }, tool_use_id: 'toolu_1', approver: 'person' }
+  const first = await api.tool.check(call)
+  expect(first.decision).toBe('ask')
+
+  const stream = api.turn.step({ turnId: 't1', index: 1, model: 'x', messageCount: 3 })
+  for await (const _chunk of stream) void _chunk
+
+  const keys = [...kv.keys()].filter((k) => k.startsWith('d:'))
+  expect(keys.length).toBe(1)
+  expect(JSON.stringify([...kv.entries()]).toLowerCase().includes('canary')).toBe(false)
+
+  const second = await api.tool.check({ ...call, tool_use_id: 'toolu_2', input: { command: 'git push --force origin release' } })
+  expect(second.decision).toBe('deny')
+  expect(second.reason).toContain('The user declined a matching Bash call')
+})

@@ -1,0 +1,44 @@
+{
+  "name": "axiom-declines",
+  "displayName": "Declines",
+  "version": "0.1.0",
+  "description": "Remembers a permission request you declined and stops Claude Code asking for the same thing again. Stores salted token hashes, never the command or its arguments.",
+  "author": {
+    "name": "Deploy Axiom"
+  },
+  "homepage": "https://github.com/percyhendrux123-prog/hermes-declines",
+  "repository": "https://github.com/percyhendrux123-prog/hermes-declines",
+  "license": "MIT",
+  "keywords": [
+    "permissions",
+    "declines",
+    "approvals",
+    "mods",
+    "scheduled-tasks"
+  ],
+  "icon": "./.claude-plugin/icon.png",
+  "userConfig": {
+    "threshold": {
+      "type": "number",
+      "title": "Match threshold",
+      "description": "How alike two requests must be (0.3 to 1) to count as the same. Lower holds more, and risks holding unrelated requests.",
+      "default": 0.6,
+      "min": 0.3,
+      "max": 1
+    },
+    "expire_days": {
+      "type": "number",
+      "title": "Days a decline holds",
+      "description": "A decline stops holding after this many days. 0 turns holding off; declines are still saved.",
+      "default": 30,
+      "min": 0,
+      "max": 365
+    },
+    "ask_before_scheduling": {
+      "type": "boolean",
+      "title": "Ask before scheduling",
+      "description": "Claude Code schedules session tasks (CronCreate) without asking. Turn this on to get a permission prompt first, so you have something to decline.",
+      "default": false
+    }
+  }
+}

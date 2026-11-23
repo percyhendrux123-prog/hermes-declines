@@ -57,6 +57,15 @@ Copy or clone this directory into your Hermes plugins directory as `hermes-decli
 - **Records are per Hermes home/profile** and are not shared between profiles.
 - **Native approval verification.** Tests replay the CLI payload observed on upstream PR #158289. A live smoke against that PR's core (head `dd4e675b10`, mock model, throwaway Hermes home) passed for create and edit cards: deny recorded, reworded repeat vetoed with no card, unrelated job prompted, duplicate vetoed, `forget` and `clear` worked. The same smoke was rerun on the released revision with the same results; a deny on an edit that only changes the schedule is not recorded, by design. Validate on your own Hermes host before enabling it.
 
+## Also for Claude Code
+
+The same idea ships as a Claude Code plugin in [`claude-plugin/declines`](claude-plugin/declines). Claude Code does not ask permission before it schedules a task, so the Claude Code version remembers declines of any permission prompt instead (shell commands, web fetches, MCP tools), holds a matching repeat with a note to Claude, and can optionally put a prompt in front of `CronCreate` so there is something to decline. It stores salted word hashes, not the request, and fails open. It is a Claude Code mod, so it installs from GitHub rather than Anthropic's directory. The plugin README lists what it cannot do. It is separate from the Hermes plugin above and needs neither Hermes nor the seat.
+
+```sh
+claude plugin marketplace add percyhendrux123-prog/hermes-declines
+claude plugin install axiom-declines@deploy-axiom-declines
+```
+
 ## License
 
 MIT
